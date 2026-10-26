@@ -28,6 +28,7 @@ test('health endpoint is public and student login creates a session', async () =
   assert.equal(login.status, 200); assert.equal(login.body.student.id, '01504');
   const data = await agent.get('/api/initial-data');
   assert.equal(data.status, 200); assert.equal(data.body.students.length, 1); assert.equal(data.body.students[0].id, '01504');
+  assert.equal(Object.hasOwn(data.body.config, 'teacherPassword'), false);
 });
 
 test('initial data and mutations require the correct sessions', async () => {
@@ -38,9 +39,27 @@ test('initial data and mutations require the correct sessions', async () => {
   await agent.post('/api/auth/student').send({ studentId: '1504' });
   assert.equal((await agent.post('/api/students').send({ id: '999', name: 'x', grade: 'ม.1' })).status, 403);
   await agent.post('/api/auth/teacher').send({ password: '1234' });
+  const teacherData = await agent.get('/api/initial-data');
+  assert.equal(Object.hasOwn(teacherData.body.config, 'teacherPassword'), false);
   const csrf = await agent.get('/api/auth/csrf');
   const result = await agent.post('/api/students').set('x-csrf-token', csrf.body.token).send({ id: '999', name: 'x', grade: 'ม.1' });
   assert.equal(result.status, 200); assert.equal(result.body.id, '00999');
+  const csrf2 = await agent.get('/api/auth/csrf');
+  const attr = await agent.post('/api/attributes/bulk').set('x-csrf-token', csrf2.body.token).send({ subjectCode: 'ว21101', data: { '01504': { r8c: { R1: 2 } } } });
+  assert.equal(attr.status, 200); assert.equal(attr.body.success, true);
+});
+
+test('session survives recreating the app with the same persistent session database', async () => {
+  const filename = path.join(os.tmpdir(), `pap5-api-restart-${process.pid}-${Date.now()}-${Math.random()}.sqlite`);
+  const sessionDb = `pap5-session-${process.pid}-${Date.now()}-${Math.random()}.sqlite`;
+  tempFiles.push(filename, path.join(os.tmpdir(), sessionDb));
+  const db = openDatabase(filename); initializeSchema(db); seedFromGasSnapshot(db, path.join(process.cwd(), 'source-gas'));
+  const env = { sessionSecret: 'restart-secret', secureCookies: false, sessionDir: os.tmpdir(), sessionDb };
+  const first = createApp({ db, env }); const agent = request.agent(first);
+  assert.equal((await agent.post('/api/auth/student').send({ studentId: '1504' })).status, 200);
+  const second = createApp({ db, env });
+  const data = await agent.get('/api/initial-data');
+  assert.equal(data.status, 200); assert.equal(data.body.students[0].id, '01504');
 });
 
 test('teacher login never returns a password and unknown route is 404', async () => {

@@ -5,6 +5,9 @@ import { requireAuthenticated } from '../auth/middleware.mjs';
 function studentView(data, studentId) {
   const result = structuredClone(data);
   result.students = result.students.filter((student) => student.id === studentId);
+  for (const [subjectCode, students] of Object.entries(result.attributes || {})) {
+    result.attributes[subjectCode] = students[studentId] ? { [studentId]: students[studentId] } : {};
+  }
   for (const details of Object.values(result.sectionDetails)) {
     for (const section of Object.values(details)) {
       if (section.scores) section.scores = section.scores[studentId] ? { [studentId]: section.scores[studentId] } : {};

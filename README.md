@@ -10,7 +10,7 @@
 
 ## ติดตั้งและ migrate
 
-ต้องใช้ Node.js 20 ขึ้นไป และควรใช้ persistent disk สำหรับ `data/` และไฟล์ session SQLite
+ต้องใช้ Node.js 22 ขึ้นไป (ตาม engine ของ `better-sqlite3`) และควรใช้ persistent disk สำหรับ `data/` และไฟล์ session SQLite
 
 ```bash
 cp .env.example .env
@@ -30,6 +30,8 @@ curl http://127.0.0.1:3000/healthz
 ## Production configuration
 
 ตั้ง `SESSION_SECRET` เป็นค่าสุ่มยาวและไม่ commit `.env` ขึ้น Git ตั้ง `NODE_ENV=production` และใช้ HTTPS ที่ reverse proxy เท่านั้น เพื่อให้ session cookie ถูกตั้ง `Secure`; ถ้าอยู่หลัง proxy ให้ตั้ง `TRUST_PROXY=1` ตาม `.env.example` และเก็บ `DATABASE_PATH` บน persistent volume
+
+ตั้ง `SESSION_DB=sessions.sqlite` บน persistent volume เดียวกับ `DATABASE_PATH`; ชื่อไฟล์ต้องคงที่เพื่อให้ session cookie ใช้ต่อได้หลัง process restart
 
 ค่า `teacherPassword` ใน snapshot ถูกคงตามข้อมูล GAS เดิมเพื่อไม่เปลี่ยนพฤติกรรมของผู้ใช้เดิม ก่อนเปิด public site ควรเปลี่ยนค่าในฐานข้อมูลด้วย migration/admin procedure ที่องค์กรควบคุมเอง ตัวอย่างการเปลี่ยนแบบ one-off ผ่าน Node คือ:
 

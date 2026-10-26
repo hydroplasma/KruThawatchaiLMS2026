@@ -97,7 +97,13 @@ export function getInitialData(db) {
     sectionDetails[code][section].assignments.push(assignment);
   }
   const sectionRemarks = {};
+  const attributes = {};
   for (const row of db.prepare('SELECT * FROM scores ORDER BY subject_code, section, student_id, "order"').all()) {
+    if (row.section === 'attributes' && row.attr_data) {
+      attributes[row.subject_code] ??= {};
+      try { attributes[row.subject_code][row.student_id] = JSON.parse(row.attr_data); } catch { attributes[row.subject_code][row.student_id] = {}; }
+      continue;
+    }
     const details = sectionDetails[row.subject_code] ??= {};
     const section = details[row.section] ??= { assignments: [], scores: {} };
     if (row.order > 0) {
@@ -121,8 +127,11 @@ export function getInitialData(db) {
     attendance[row.subject_code][row.date].records[row.student_id] = row.status;
   }
   const config = {};
-  for (const row of db.prepare('SELECT key, value FROM config').all()) config[row.key] = row.key === 'theme' ? row.value : formatThaiDateTime(row.value);
+  for (const row of db.prepare('SELECT key, value FROM config').all()) {
+    if (row.key === 'teacherPassword') continue;
+    config[row.key] = row.key === 'theme' ? row.value : formatThaiDateTime(row.value);
+  }
   config.theme ||= 'default';
   config.lastUpdate ||= formatThaiDateTime(new Date());
-  return { students, subjects, units, assignmentMeta, sectionDetails, sectionRemarks, attendance, config };
+  return { students, subjects, units, assignmentMeta, sectionDetails, sectionRemarks, attendance, attributes, config };
 }

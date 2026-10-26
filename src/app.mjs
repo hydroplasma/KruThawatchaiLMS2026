@@ -18,7 +18,7 @@ export function createApp({ db, env = {} } = {}) {
   if (env.trustProxy || process.env.TRUST_PROXY) app.set('trust proxy', Number(env.trustProxy || process.env.TRUST_PROXY) || 1);
   app.use(securityHeaders);
   app.use(express.json({ limit: '1mb' }));
-  app.use(createSessionMiddleware({ dbPath: sessionDir, sessionDb: env.sessionDb || `sessions-${process.pid}-${Date.now()}-${Math.random().toString(16).slice(2)}.sqlite`, secret: env.sessionSecret, secure: env.secureCookies }));
+  app.use(createSessionMiddleware({ dbPath: sessionDir, sessionDb: env.sessionDb || process.env.SESSION_DB || 'sessions.sqlite', secret: env.sessionSecret, secure: env.secureCookies }));
   app.get('/healthz', (req, res) => res.json({ ok: true }));
   app.use('/api/auth', createAuthRouter({ db }));
   app.use('/api', createDataRouter({ db }));

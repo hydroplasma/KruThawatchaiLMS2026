@@ -65,7 +65,7 @@ export function logoutSession(req, res) {
   });
 }
 
-export function createSessionMiddleware({ dbPath, sessionDb = 'sessions.sqlite', secret, secure = process.env.NODE_ENV === 'production' } = {}) {
+export function createSessionMiddleware({ dbPath, sessionDb = process.env.SESSION_DB || 'sessions.sqlite', secret, secure = process.env.NODE_ENV === 'production' } = {}) {
   return session({
     store: new BetterSqliteSessionStore({ dir: dbPath, db: sessionDb }),
     secret: secret || process.env.SESSION_SECRET || 'development-only-secret',

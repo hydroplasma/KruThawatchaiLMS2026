@@ -6,7 +6,7 @@ import path from 'node:path';
 const publicIndex = path.join(process.cwd(), 'public', 'Index.html');
 const adapter = path.join(process.cwd(), 'public', 'gas-compat.js');
 const original = fs.readFileSync(path.join(process.cwd(), 'source-gas', 'Index.html'), 'utf8');
-const functions = ['getInitialData', 'batchSaveScores', 'updateRemark', 'verifyTeacherPasswordFromSheet', 'deleteUnit', 'saveUnit', 'autoGenerateAssignments', 'addAssignment', 'updateAssignment', 'deleteAssignment', 'saveAttendance', 'addStudent', 'updateStudent', 'deleteStudent', 'saveThemeToConfig'];
+const functions = ['getInitialData', 'batchSaveScores', 'saveBulkAttributes', 'updateRemark', 'verifyTeacherPasswordFromSheet', 'deleteUnit', 'saveUnit', 'autoGenerateAssignments', 'addAssignment', 'updateAssignment', 'deleteAssignment', 'saveAttendance', 'addStudent', 'updateStudent', 'deleteStudent', 'saveThemeToConfig'];
 
 test('frontend keeps original UI and uses the REST adapter', () => {
   assert.equal(fs.existsSync(publicIndex), true);

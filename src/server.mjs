@@ -9,6 +9,6 @@ const filename = path.resolve(process.env.DATABASE_PATH || path.join(root, 'data
 const db = openDatabase(filename);
 initializeSchema(db);
 seedFromGasSnapshot(db, path.join(root, 'source-gas'));
-const app = createApp({ db, env: { sessionSecret: process.env.SESSION_SECRET, secureCookies: process.env.NODE_ENV === 'production', sessionDir: path.dirname(filename), trustProxy: process.env.TRUST_PROXY } });
+const app = createApp({ db, env: { sessionSecret: process.env.SESSION_SECRET, sessionDb: process.env.SESSION_DB || 'sessions.sqlite', secureCookies: process.env.NODE_ENV === 'production', sessionDir: path.dirname(filename), trustProxy: process.env.TRUST_PROXY } });
 const port = Number(process.env.PORT || 3000);
 app.listen(port, () => console.log(`PAP5 server listening on ${port}`));

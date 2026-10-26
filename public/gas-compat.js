@@ -1,5 +1,5 @@
 (() => {
-  const mutationNames = new Set(['batchSaveScores','updateRemark','deleteUnit','saveUnit','autoGenerateAssignments','addAssignment','updateAssignment','deleteAssignment','saveAttendance','addStudent','updateStudent','deleteStudent','saveThemeToConfig']);
+  const mutationNames = new Set(['batchSaveScores','saveBulkAttributes','updateRemark','deleteUnit','saveUnit','autoGenerateAssignments','addAssignment','updateAssignment','deleteAssignment','saveAttendance','addStudent','updateStudent','deleteStudent','saveThemeToConfig']);
 
   async function requestJson(url, options = {}) {
     const init = { credentials: 'same-origin', ...options, headers: { 'Content-Type': 'application/json', ...(options.headers || {}) } };
@@ -21,6 +21,7 @@
       const csrf = await requestJson('/api/auth/csrf');
       const headers = { 'x-csrf-token': csrf.token };
       if (name === 'batchSaveScores') return requestJson('/api/scores/batch', { method: 'POST', headers, body: JSON.stringify(args[0]) });
+      if (name === 'saveBulkAttributes') return requestJson('/api/attributes/bulk', { method: 'POST', headers, body: JSON.stringify(args[0]) });
       if (name === 'updateRemark') return requestJson('/api/remarks', { method: 'POST', headers, body: JSON.stringify(args[0]) });
       if (name === 'saveUnit') return requestJson('/api/units', { method: 'POST', headers, body: JSON.stringify(args[0]) });
       if (name === 'saveAttendance') return requestJson('/api/attendance', { method: 'POST', headers, body: JSON.stringify(args[0]) });

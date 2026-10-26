@@ -43,7 +43,7 @@ test('getInitialData returns the GAS-compatible shape', () => {
   const { db } = makeDb();
   seedFromGasSnapshot(db, path.join(process.cwd(), 'source-gas'));
   const data = getInitialData(db);
-  assert.deepEqual(Object.keys(data).sort(), ['assignmentMeta', 'attendance', 'config', 'sectionDetails', 'sectionRemarks', 'students', 'subjects', 'units'].sort());
+  assert.deepEqual(Object.keys(data).sort(), ['assignmentMeta', 'attendance', 'attributes', 'config', 'sectionDetails', 'sectionRemarks', 'students', 'subjects', 'units'].sort());
   assert.equal(data.students.find((student) => student.id === '01504').id, '01504');
   assert.ok(data.assignmentMeta);
   assert.ok(data.sectionDetails);
