@@ -10,5 +10,8 @@
     "test": "node --test",
     "start": "node src/server.mjs",
     "migrate": "node scripts/migrate.mjs"
+  },
+  "dependencies": {
+    "better-sqlite3": "^13.0.3"
   }
 }
