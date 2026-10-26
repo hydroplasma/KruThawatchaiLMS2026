@@ -20,6 +20,9 @@ afterEach(() => { for (const filename of tempFiles.splice(0)) { try { fs.rmSync(
 test('health endpoint is public and student login creates a session', async () => {
   const app = makeApp();
   assert.equal((await request(app).get('/healthz')).status, 200);
+  const home = await request(app).get('/');
+  assert.equal(home.status, 200);
+  assert.match(home.text, /ระบบสารสนเทศ ปพ\.5/);
   const agent = request.agent(app);
   const login = await agent.post('/api/auth/student').send({ studentId: '1504' });
   assert.equal(login.status, 200); assert.equal(login.body.student.id, '01504');

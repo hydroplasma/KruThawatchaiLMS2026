@@ -23,6 +23,9 @@ export function createApp({ db, env = {} } = {}) {
   app.use('/api/auth', createAuthRouter({ db }));
   app.use('/api', createDataRouter({ db }));
   app.use('/api', createMutationRouter({ db }));
+  app.get('/', (req, res, next) => res.sendFile('Index.html', { root: path.join(root, 'public') }, (error) => {
+    if (error && !res.headersSent) next(error);
+  }));
   app.use(express.static(path.join(root, 'public')));
   app.use((req, res) => res.status(404).json({ success: false, error: 'ไม่พบเส้นทางที่ร้องขอ' }));
   app.use((error, req, res, next) => {

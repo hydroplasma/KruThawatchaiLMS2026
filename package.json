@@ -9,11 +9,12 @@
   "scripts": {
     "test": "node --test",
     "start": "node src/server.mjs",
-    "migrate": "node scripts/migrate.mjs"
+    "migrate": "node scripts/migrate.mjs",
+    "backup": "node scripts/backup.mjs",
+    "restore-check": "node scripts/restore-check.mjs"
   },
   "dependencies": {
     "better-sqlite3": "^13.0.3",
-    "connect-sqlite3": "^0.9.18",
     "express": "^5.3.0",
     "express-rate-limit": "^8.7.1",
     "express-session": "^1.19.0",
