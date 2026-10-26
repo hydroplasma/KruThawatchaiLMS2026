@@ -32,10 +32,10 @@ export function logoutSession(req, res) {
   });
 }
 
-export function createSessionMiddleware({ dbPath, secret, secure = process.env.NODE_ENV === 'production' } = {}) {
+export function createSessionMiddleware({ dbPath, sessionDb = 'sessions.sqlite', secret, secure = process.env.NODE_ENV === 'production' } = {}) {
   const SQLiteStore = connectSqlite3(session);
   return session({
-    store: new SQLiteStore({ db: 'sessions.sqlite', dir: dbPath }),
+    store: new SQLiteStore({ db: sessionDb, dir: dbPath }),
     secret: secret || process.env.SESSION_SECRET || 'development-only-secret',
     resave: false,
     saveUninitialized: false,
